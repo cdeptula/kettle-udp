@@ -1,4 +1,4 @@
-package org.ggraham.udpreceiver;
+package org.ggraham.tcpreceiver;
 /*
  * 
  * Apache License 2.0 
@@ -10,12 +10,10 @@ package org.ggraham.udpreceiver;
  */
 
 import org.ggraham.ggutils.message.FieldType;
-import org.ggraham.ggutils.message.PacketDecoder;
 import org.ggraham.ggutils.message.PacketFieldConfig;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.annotations.Step;
 import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.di.core.encryption.Encr;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettlePluginException;
 import org.pentaho.di.core.exception.KettleStepException;
@@ -29,22 +27,18 @@ import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
-import org.pentaho.di.trans.step.BaseStepMeta;
-import org.pentaho.di.trans.step.StepDataInterface;
-import org.pentaho.di.trans.step.StepInterface;
-import org.pentaho.di.trans.step.StepMeta;
-import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.step.*;
 import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Step( id = "UDPReceiverMeta", 
-    image = "UDPReceiverIcon.svg", 
-    name = "UDPReceiverStep.Name", 
-    description = "Receive and process UDP packets", 
-    i18nPackageName = "com.hitachivantara.udpreceiver",
+@Step( id = "TCPReceiverMeta", 
+    image = "TCPReceiverIcon.svg", 
+    name = "TCPReceiverStep.Name", 
+    description = "Receive and process TCP packets", 
+    i18nPackageName = "org.ggraham.tcpreceiver",
     categoryDescription = "i18n:org.pentaho.di.trans.step:BaseStep.Category.Input" ) 
 /**
  * 
@@ -53,10 +47,10 @@ import java.util.List;
  * @author ggraham
  *
  */
-public class UDPReceiverMeta
+public class TCPReceiverMeta
     extends BaseStepMeta implements StepMetaInterface {
 
-  public static Class<?> PKG = UDPReceiverMeta.class;
+  public static Class<?> PKG = TCPReceiverMeta.class;
   
   private String m_address = "localhost";
   private String m_port = "0";
@@ -181,11 +175,11 @@ public class UDPReceiverMeta
   @Override
   public StepInterface getStep( StepMeta stepMeta, StepDataInterface stepDataInterface, int i, TransMeta transMeta,
       Trans trans ) {
-    return new UDPReceiverStep( stepMeta, stepDataInterface, i, transMeta, trans );
+    return new TCPReceiverStep( stepMeta, stepDataInterface, i, transMeta, trans );
   }
 
   @Override public StepDataInterface getStepData() {
-    return new UDPReceiverData();
+    return new TCPReceiverData();
   }
   
   private String getTagValue(Node stepNode, String tagName, String defvalue) {
