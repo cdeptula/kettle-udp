@@ -29,6 +29,7 @@ import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.*;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -281,6 +282,17 @@ public class TCPReceiverStep extends BaseStep implements StepInterface {
 		public abstract boolean handleMessage(ByteBuffer message);
 	}
 
+	private static byte[] trimByteArray(byte[] bytes)
+	{
+		int i = bytes.length - 1;
+		while (i >= 0 && bytes[i] == 0)
+		{
+			--i;
+		}
+
+		return Arrays.copyOf(bytes, i + 1);
+	}
+
 	protected class HandlerCallback_Default extends HandlerCallback {
 
 		public HandlerCallback_Default(TCPReceiverMeta meta, TCPReceiverData data) {
@@ -353,7 +365,8 @@ public class TCPReceiverStep extends BaseStep implements StepInterface {
 			logDebug("Handling message passing as binary.");
 			Object[] outRow = RowDataUtil.allocateRowData(m_data.m_outputRowMeta.size());
 			byte[] val = new byte[message.remaining()];
-			outRow[0] = message.get(val, 0, val.length).array();
+			outRow[0] = trimByteArray( message.array() ); //.get(val, 0, val.length)
+
 			logDebug("Value: "+outRow[0].toString());
 			try {
 				putRow(m_data.m_outputRowMeta, outRow); // putRow is synched according to javadoc
